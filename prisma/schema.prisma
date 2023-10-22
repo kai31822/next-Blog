@@ -9,3 +9,69 @@ datasource db {
   provider = "mysql"
   url      = env("DATABASE_URL")
 }
+
+//database schema
+//blog
+model User {
+  id        Int      @id @default(autoincrement())
+  email     String   @unique
+  name      String?  @unique @db.VarChar(20)
+  password  String   @db.VarChar(25)
+  role      Role     @default(USER)
+  posts     Post[]
+  profile   Profile?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Profile {
+  id     Int    @id @default(autoincrement())
+  bio    String
+  user   User   @relation(fields: [userId], references: [id])
+  userId Int    @unique
+}
+
+model Post {
+  id         Int        @id @default(autoincrement())
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+  title      String
+  published  Boolean    @default(false)
+  context    String     @db.Text
+  author     User       @relation(fields: [authorId], references: [id])
+  authorId   Int
+  categories Category[] // A post can have many category
+  tags       Tag[]
+}
+
+model Category {
+  id    Int    @id @default(autoincrement())
+  name  String
+  posts Post[]
+}
+
+model Tag {
+  name  String @id
+  posts Post[]
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+//issues
+model Issues {
+  id        Int      @id @default(autoincrement())
+  title     String   @db.VarChar(255)
+  decripion String   @db.Text
+  status    Status   @default(OPEN)
+  createdAT DateTime @default(now())
+  updatedAT DateTime @updatedAt
+}
+
+enum Status {
+  OPEN
+  IN_PROGRESS
+  CLOSED
+}
