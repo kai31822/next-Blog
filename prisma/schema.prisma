@@ -19,6 +19,7 @@ model User {
   password  String   @db.VarChar(25)
   role      Role     @default(USER)
   posts     Post[]
+  Issues    Issues[]
   profile   Profile?
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -62,12 +63,14 @@ enum Role {
 
 //issues
 model Issues {
-  id        Int      @id @default(autoincrement())
-  title     String   @db.VarChar(255)
-  decripion String   @db.Text
-  status    Status   @default(OPEN)
-  createdAT DateTime @default(now())
-  updatedAT DateTime @updatedAt
+  id          Int      @id @default(autoincrement())
+  title       String   @db.VarChar(255)
+  description String   @db.Text
+  status      Status   @default(OPEN)
+  createdAT   DateTime @default(now())
+  updatedAT   DateTime @updatedAt
+  User        User     @relation(fields: [userId], references: [id])
+  userId      Int
 }
 
 enum Status {
