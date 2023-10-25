@@ -4,7 +4,7 @@ import { usePathname } from 'next/navigation'
 import classNames from 'classnames'
 //link
 import Link from 'next/link'
-
+import SigninButton from './components/SigninButton'
 
 const Navbar = () => {
     const links = [
@@ -29,6 +29,7 @@ const Navbar = () => {
                         </li>
                     ))}
                 </ul>
+                <SigninButton></SigninButton>
             </div>
         </nav>
     )

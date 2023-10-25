@@ -10,39 +10,48 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-//database schema
+//database schema   [ npx prisma migrate dev   ]
 //blog
 model User {
-  id        Int      @id @default(autoincrement())
-  email     String   @unique
-  name      String?  @unique @db.VarChar(20)
-  password  String   @db.VarChar(25)
-  role      Role     @default(USER)
-  posts     Post[]
-  Issues    Issues[]
-  profile   Profile?
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  //field: name   type
+  id            String   @id @default(uuid())
+  email         String   @unique
+  name          String?  @unique @db.VarChar(20)
+  password      String
+  role          Role     @default(USER)
+  posts         Post[]   @relation("WrittenPosts")
+  favoritePosts Post[]   @relation("FavoritePosts")
+  Issues        Issues[]
+  profile       Profile?
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@unique([email, name])
+  @@index([email, name])
 }
 
 model Profile {
   id     Int    @id @default(autoincrement())
-  bio    String
+  bio    String @default("...")
   user   User   @relation(fields: [userId], references: [id])
-  userId Int    @unique
+  userId String @unique
 }
 
 model Post {
-  id         Int        @id @default(autoincrement())
-  createdAt  DateTime   @default(now())
-  updatedAt  DateTime   @updatedAt
-  title      String
-  published  Boolean    @default(false)
-  context    String     @db.Text
-  author     User       @relation(fields: [authorId], references: [id])
-  authorId   Int
-  categories Category[] // A post can have many category
-  tags       Tag[]
+  id           String     @id @default(uuid())
+  title        String
+  published    Boolean    @default(false)
+  context      String     @db.Text
+  //Posts
+  author       User       @relation("WrittenPosts", fields: [authorId], references: [id])
+  authorId     String
+  //favoritePosts
+  favoriteBy   User?      @relation("FavoritePosts", fields: [favoriteById], references: [id])
+  favoriteById String?
+  categories   Category[] // A post can have many category
+  tags         Tag[]
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
 }
 
 model Category {
@@ -70,7 +79,7 @@ model Issues {
   createdAT   DateTime @default(now())
   updatedAT   DateTime @updatedAt
   User        User     @relation(fields: [userId], references: [id])
-  userId      Int
+  userId      String
 }
 
 enum Status {
