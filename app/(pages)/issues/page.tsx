@@ -9,7 +9,7 @@ const IssuesPage = () => {
   return (
     <>
 
-      <Button><Link href='/issues/new'>New Issue</Link></Button>
+      <Button ><Link href='/issues/new'>New Issue</Link></Button>
     </>
   )
 }

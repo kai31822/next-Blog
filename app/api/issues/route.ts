@@ -1,15 +1,10 @@
 //Create Issue
 import { NextRequest, NextResponse } from "next/server";
-//zod
-import { z } from 'zod';
 //prisma
 import prisma from "@/app/components/client";
 
 // createIssue
-export const createIssueSchema = z.object({
-    title: z.string().min(1, 'Title is required.').max(255),
-    description: z.string().min(1, 'Title is required.').max(255)
-});
+import { createIssueSchema } from '@/app/validationSchemas'
 
 export async function POST(request: NextRequest) {
     const body = await request.json();
@@ -24,7 +19,7 @@ export async function POST(request: NextRequest) {
     const newIssue = await prisma.user.update({
         where: {
             //待修改為使用者自己的id  測試用1
-            id: 1
+            id: "1"
         },
         data: {
             Issues: {

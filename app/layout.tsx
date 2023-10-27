@@ -2,12 +2,13 @@ import type { Metadata } from 'next'
 import { Inter } from 'next/font/google'
 //css https://www.radix-ui.com/themes/docs/overview/getting-started
 import '@radix-ui/themes/styles.css';
-import './theme-config.css';
 import './globals.css';
+import './theme-config.css';
 // import radix ui
 import { Theme } from '@radix-ui/themes';
 // page
 import Navbar from './Navbar'
+import Footer from './Footer'
 //middleware
 import Providers from '@/app/components/Providers'
 
@@ -32,9 +33,10 @@ export default function RootLayout({
     <html lang="en">
       <body className={inter.variable}>
         <Providers>
-          <Theme appearance="light" accentColor="sky">
+          <Theme >
             <Navbar></Navbar>
             <main>{children}</main>
+            <Footer></Footer>
           </Theme>
         </Providers>
       </body>

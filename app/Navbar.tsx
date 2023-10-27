@@ -9,6 +9,11 @@ import SigninButton from './components/SigninButton'
 const Navbar = () => {
     const links = [
         { label: 'Home', href: '/' },
+        { label: 'All', href: '/allposts' },
+        { label: 'Game', href: '/games' },
+        { label: 'Food', href: '/foods' },
+        { label: 'X not X', href: '/space' },
+        { label: 'uu', href: '/memes' },
         { label: 'Issues', href: '/issues' },
         { label: 'About', href: '/about' }
     ]

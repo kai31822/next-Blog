@@ -7,10 +7,12 @@ import { verifyJWT } from "@/app/lib/jwt";
 
 export async function GET(request: NextRequest, { params }: { params: { user: string } }) {
     //
-    const accessToken = request.headers.get("authorization")
-    if (!accessToken || !verifyJWT(accessToken)) {
-        return NextResponse.json({ error: "unauthorized" }, { status: 401 })
-    }
+    // const accessToken = request.headers.get("authorization")
+
+
+    // if (!accessToken || verifyJWT(accessToken)) {
+    //     return NextResponse.json({ error: "unauthorized" }, { status: 401 })
+    // }
     //create New Issue
     const userPosts = await prisma.post.findMany({
         // option + esc
