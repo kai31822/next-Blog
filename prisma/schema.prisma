@@ -12,22 +12,55 @@ datasource db {
 
 //database schema   [ npx prisma migrate dev   ]
 //blog
+model Account {
+  id                String  @id @default(uuid())
+  userId            String
+  type              String
+  provider          String
+  providerAccountId String
+  refresh_token     String? @db.Text
+  access_token      String? @db.Text
+  expires_at        Int?
+  token_type        String?
+  scope             String?
+  id_token          String? @db.Text
+  session_state     String?
+
+  user User @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([provider, providerAccountId])
+}
+
 model User {
   //field: name   type
-  id            String   @id @default(uuid())
-  email         String   @unique
-  name          String?  @unique @db.VarChar(20)
+  id            String    @id @default(uuid())
+  email         String    @unique
+  name          String?   @db.VarChar(20)
+  username      String?   @unique
   password      String
-  role          Role     @default(USER)
-  posts         Post[]   @relation("WrittenPosts")
-  favoritePosts Post[]   @relation("FavoritePosts")
+  role          Role      @default(USER)
+  posts         Post[]    @relation("WrittenPosts")
+  favoritePosts Post[]    @relation("FavoritePosts")
   Issues        Issues[]
   profile       Profile?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+  emailVerified DateTime?
+
+  image    String?
+  accounts Account[]
+  sessions Session[]
 
   @@unique([email, name])
   @@index([email, name])
+}
+
+model Session {
+  id           String   @id @default(cuid())
+  sessionToken String   @unique
+  userId       String
+  expires      DateTime
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
 }
 
 model Profile {
@@ -55,8 +88,7 @@ model Post {
 }
 
 model Category {
-  id    Int    @id @default(autoincrement())
-  name  String
+  name  String @id
   posts Post[]
 }
 

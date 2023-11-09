@@ -11,23 +11,30 @@ import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { useState } from "react";
 import { zodResolver } from '@hookform/resolvers/zod';
-import { createIssueSchema } from '@/app/validationSchemas';
+import { createPostSchema } from '@/app/validationSchemas';
 import { z } from 'zod';
 import ErrorMessage from '@/app/components/ErrorMassage';
 import Spinner from '@/app/components/Spinner';
+import { useSession } from "next-auth/react"
+
 //
-type IssueForm = z.infer<typeof createIssueSchema>;
+type PostForm = z.infer<typeof createPostSchema>;
 
 const NewIssuePage = () => {
+    const { data: session, status } = useSession()
+
+
     const route = useRouter()
     //resolver
-    const { register, control, handleSubmit, formState: { errors } } = useForm<IssueForm>({
-        resolver: zodResolver(createIssueSchema)
+    const { register, control, handleSubmit, formState: { errors } } = useForm<PostForm>({
+        resolver: zodResolver(createPostSchema)
     })
     // console.log(register('title'));
     const [error, setError] = useState('');
     //spinner
     const [isSubmitting, setSubmitting] = useState(false);
+
+
 
     return (
         <div className='max-w-xl '>
@@ -43,30 +50,30 @@ const NewIssuePage = () => {
             <form className='space-y-3' onSubmit={handleSubmit(async (data) => {
                 try {
                     setSubmitting(true)
-                    await axios.post('/api/issues', data);
-                    route.push('/');
+
+                    await axios.post('/api/post/new', data);
+                    route.push('/dashboard');
                 } catch (error) {
                     setSubmitting(false)
                     setError('An unexpected error occurred.')
                 }
 
             })}>
+                <input type="text" value={session?.user.id} className='hidden' {...register('userid')} />
                 {/* https://www.radix-ui.com/themes/docs/components/text-field */}
                 <TextField.Root>
-                    <TextField.Slot>
-
-                    </TextField.Slot>
                     <TextField.Input placeholder="Title" {...register('title')} />
                 </TextField.Root>
                 {/*error  */}
                 <ErrorMessage>{errors.title?.message}</ErrorMessage>
-                <Controller name='description' control={control} render={({ field }) => <SimpleMDE placeholder="Description" {...field} />} />
+                <Controller name='context' control={control} render={({ field }) => <SimpleMDE placeholder="context" {...field} />} />
                 {/*error  */}
-                <ErrorMessage>{errors.description?.message}</ErrorMessage>
-                <Button disabled={isSubmitting}>Submit New Issue {isSubmitting && <Spinner />}</Button>
+                <ErrorMessage>{errors.context?.message}</ErrorMessage>
+                <Button disabled={isSubmitting}>Submit New Post {isSubmitting && <Spinner />}</Button>
             </form>
         </div>
     )
-}
 
+
+}
 export default NewIssuePage

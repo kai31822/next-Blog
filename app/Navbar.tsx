@@ -6,7 +6,12 @@ import classNames from 'classnames'
 import Link from 'next/link'
 import SigninButton from './components/SigninButton'
 
+//session
+
+
 const Navbar = () => {
+
+
     const links = [
         { label: 'Home', href: '/' },
         { label: 'All', href: '/allposts' },

@@ -7,7 +7,7 @@ import prisma from "@/app/components/client";
 
 // find user
 export const findUserSchema = z.object({
-    email: z.string().min(1, 'email is required.').max(255),
+    name: z.string().min(1, 'name is required.').max(255),
 
 });
 
@@ -24,7 +24,7 @@ export async function POST(request: NextRequest) {
     const user = await prisma.user.findFirst({
         // option + esc
         where: {
-            email: body.email
+            name: body.name
         }
 
 

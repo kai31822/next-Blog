@@ -1,38 +1,37 @@
-'use client'
+import { Metadata } from 'next'
 import React, { useEffect, useState } from 'react'
-import { Flex, Box, Card, Text, Avatar } from '@radix-ui/themes'
-import getUser from '@/app/lib/getUser'
-import { useSession } from 'next-auth/react'
+import { Flex, Box, Card, Text, Avatar, Button } from '@radix-ui/themes'
+import getAllUsers from '@/app/lib/getAllUsers'
+import Link from 'next/link'
 
 
+export const metadata: Metadata = {
+  title: 'OXO',
+}
+const DashboardPage = async () => {
 
-const DashboardPage = () => {
-  const [userd, setUserd] = useState(null)
-  const { data: session } = useSession()
-  useEffect(() => {
-    const fetchData = async () => {
-      //fail
-      const response = await fetch(`http://localhost:3000/api/users/3dc54af5-8c68-4843-933e-c01f17871256`,
-        {
-          //fail
-          headers: { 'authorization': `${session?.user.accessToken}` }
-        })
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`)
-      }
-      const result = await response.json()
-      setUserd(result)
-      console.log(result);
+  const usersdata: Promise<User[]> = getAllUsers()
+  const users = await usersdata
 
+  const content = (
+    <section>
+      <h2>
+        <Link href="/">back to home</Link>
+      </h2>
+      <br />
+      {users.map((user, index) => {
+        return (
+          <div key={index}>
+            <h1 ><Link href={`/users/${user.id}`}>{user.name}</Link></h1>
+            <p>{user.email}</p>
+            <br />
 
-    }
-    fetchData().catch((e) => {
-      // handle the error as needed
-      console.error('An error occurred while fetching the data: ', e)
-    })
-    console.log(userd);
+          </div>
+        )
+      })}
+    </section>
+  )
 
-  }, [])
 
 
   return (
@@ -40,11 +39,14 @@ const DashboardPage = () => {
     <Flex gap="3" className='p-5'>
       {/* 1 */}
       <Flex className='bg-red-500 w-2/12 h-screen'>
-        <Box className='px-5 py-2'><p>Sidebar</p></Box>
+        <Box className='px-5 py-2'><p>Sidebar</p>
+          <Button ><Link href='/dashboard/new'>New Post</Link></Button>
+          <Button ><Link href='/issues/new'>New Issue</Link></Button>
+        </Box>
       </Flex>
 
       {/* 2 */}
-      <Flex gap="3" className='bg-sky-500 w-10/12 h-screen'>
+      <Flex gap="3" className='bg-sky-500 w-10/12 h-screen' >
         <Box className='px-5 py-2 w-full'>
           <p>User Post</p>
           {/* test1 */}
@@ -57,25 +59,10 @@ const DashboardPage = () => {
                 fallback="T"
               /> */}
 
-              <Box>
-                <Text as="div" size="2" weight="bold" >
-                  Teodros Girmay
-                </Text>
-                <Text as="div" size="2" color="gray">
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur, excepturi recusandae quam asperiores soluta aliquid impedit reiciendis ducimus, necessitatibus eveniet distinctio vitae similique blanditiis rerum dolorum, minima quo fugiat commodi.
-                </Text>
-              </Box>
-              {/*  */}
-              {/* {userd ?? userd.map(d => {
-                <Box key={d}>
-                  <Text as="div" size="2" weight="bold" >
-                    Teodros Girmay
-                  </Text>
-                  <Text as="div" size="2" color="gray">
-                    Lorem ipsum dolor sit amet consectetur adipisicing elit. Consequuntur, excepturi recusandae quam asperiores soluta aliquid impedit reiciendis ducimus, necessitatibus eveniet distinctio vitae similique blanditiis rerum dolorum, minima quo fugiat commodi.
-                  </Text>
-                </Box>
-              })} */}
+              {content}
+
+
+
 
             </Flex>
           </Card>
